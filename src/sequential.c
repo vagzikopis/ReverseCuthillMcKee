@@ -28,14 +28,19 @@ Array * rcmSequential(Graph * graph)
     {
         if (Q->head == Q->tail)
         {
+            // Picking nodes from original graph
             workNode = popGraph(graph);
         }
         else
         {
+            // Picking iteratively adjacent (neighbour) nodes
+            // to the last picked node from the original graph
             workNode = popGraph(Q);
         }
+
         if(!workNode->inR)
         {
+            // R->idx++ happens inside pushArray() call
             pushArray(R, workNode);         
             for(int i=0; i<workNode->degree; i++)
             {

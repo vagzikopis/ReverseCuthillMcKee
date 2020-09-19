@@ -165,6 +165,8 @@ Graph * initializeGraph(int *arr, int size)
                 continue;
             if(arr[size * i + j])
             {
+                // Traverse the original matrix and calculate degree & 
+                // neighbours for each graph node
                 graph->nodes[i]->degree++;
                 graph->nodes[i]->neighbours[counter] = (Node*)malloc(sizeof(Node));
                 graph->nodes[i]->neighbours[counter] = graph->nodes[j];
@@ -184,9 +186,9 @@ void sortGraph(Graph * G)
     for(int i=0; i<G->size; i++)
     {
         // Sort neighbours of each node, based on neighbours' degrees  
-        qsort (G->nodes[i]->neighbours, G->nodes[i]->degree, sizeof(G->nodes[i]->neighbours), compare);
+        qsort(G->nodes[i]->neighbours, G->nodes[i]->degree, sizeof(G->nodes[i]->neighbours), compare);
     }
     // Sort nodes based on nodes' degree  
-    qsort (G->nodes, G->size, sizeof(G->nodes), compare);
+    qsort(G->nodes, G->size, sizeof(G->nodes), compare);
 }
 
