@@ -1,6 +1,5 @@
 #include "../inc/rcm.h"
 
-
 // This is a helper function for qsort.
 // It is used in order to perform qsort to an array of structs
 int compare (const void * a, const void * b)
@@ -113,10 +112,24 @@ void graphToSparseMatrix(Graph * finalG, int size, int *arr)
     }
 }
 
-// This function saves a col-major int array to a .csv file int matrices directory
-void saveCsv (int *arr, char * filename, int size)
+// This function saves a col-major int array to a .csv file in sparseMatrices directory
+void saveCsv (int *arr, int size, int input)
 {
-    FILE *f = fopen(filename, "w");
+    char path[60];
+    if(input)
+    {
+        strcpy(path, "../sparseMatrices/input_size");
+    }
+    else
+    {
+        strcpy(path,"../sparseMatrices/output_size");
+    }
+    char name[8];
+    char type[8] = ".csv";
+    sprintf(name, "%d", size);
+    strcat(path, name);
+    strcat(path, type);
+    FILE *f = fopen(path, "w");
     if (f == NULL) exit(1);
     for(int i=0; i<size; i++)
     {
@@ -126,6 +139,43 @@ void saveCsv (int *arr, char * filename, int size)
         }
         fprintf(f,"\n");
     }
+}
+
+// This function saves a col-major int array to a .txt file in sparseMatrices directory
+void saveTxt(int *arr, int size)
+{
+    char path[50] = "../sparseMatrices/input_size";
+    char name[8];
+    char type[8] = ".txt";
+    sprintf(name, "%d", size);
+    strcat(path, name);
+    strcat(path, type);
+    FILE *file = fopen(path, "w");
+    for(int i=0; i<size*size; i++)
+    {
+        if (fprintf(file,"%d", arr[i]) != 1)
+        {
+            printf("Error failed to create the txt file\n");
+        }
+    }
+    fclose(file);
+}
+
+// This function reads a sparse Matrix from a .txt file and stores it in a col-major array 
+int *readTxt(char * filename, int size)
+{
+    int *arr = (int *)malloc(size*size*sizeof(int));
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL){
+        printf("Could not open file\n");
+        exit(1);
+    }
+    for (int i = 0; i < size*size; i++)
+    {
+        fscanf(fp, "%1d", &arr[i]);
+    }
+    fclose(fp);
+    return arr;
 }
 
 // Swap positions of two elements in R->nodeIdx array

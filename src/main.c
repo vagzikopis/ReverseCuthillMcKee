@@ -3,6 +3,7 @@
 
 int main(int argc, char *argv[])
 {
+
     // Enter matrix size and density
     int size;
     double density;
@@ -35,14 +36,16 @@ int main(int argc, char *argv[])
         for(int j=0; j<i; j++)
             arr[size*i + j] = arr[size*j + i];
     }
-    saveCsv(arr, "../sparseMatrices/input.csv", size);
+    saveCsv(arr, size, 1);
+    saveTxt(arr, size);
 
+    gettimeofday(&start, NULL);
     // Generate the initial graph
     Graph * graph = initializeGraph(arr, size); 
-    gettimeofday(&start, NULL);
     // Calculate permutations matrix
     Array * R = rcmSequential(graph);
     gettimeofday(&end, NULL);
+
     // Re-generate the initial graph, since the first was 
     // changed from function "rcmSequential"
     Graph * initialG = initializeGraph(arr, size);
@@ -50,13 +53,13 @@ int main(int argc, char *argv[])
     // Create the final graph from the initial graph and 
     // the permutation matrix R
     Graph * finalG = finalGraph(initialG, R);
-    printf("N: %d\tDensity: %.1lf%%\tExecution Time: %lf\n",size,density,
+    printf("N: %d\tDensity: %.1lf%%\tRCM Execution Time: %lf\n",size,density,
             (double)((end.tv_usec - start.tv_usec)/1.0e6 + 
             end.tv_sec - start.tv_sec));
    
     // Print the final Sparse Matrix  
     graphToSparseMatrix(finalG, size, arr);
-    saveCsv(arr, "../sparseMatrices/output.csv", size);
+    saveCsv(arr, size, 0);
 
     // Free allocated memory
     free(graph);
