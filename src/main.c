@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "../inc/rcm.h"
 
 
@@ -36,8 +37,8 @@ int main(int argc, char *argv[])
         for(int j=0; j<i; j++)
             arr[size*i + j] = arr[size*j + i];
     }
-    saveCsv(arr, size, 1);
-    saveTxt(arr, size);
+    // saveCsv(arr, size, 1);
+    // saveTxt(arr, size);
 
     gettimeofday(&start, NULL);
     // Generate the initial graph
@@ -48,23 +49,34 @@ int main(int argc, char *argv[])
 
     // Re-generate the initial graph, since the first was 
     // changed from function "rcmSequential"
-    Graph * initialG = initializeGraph(arr, size);
+    // Graph * initialG = initializeGraph(arr, size);
 
     // Create the final graph from the initial graph and 
     // the permutation matrix R
-    Graph * finalG = finalGraph(initialG, R);
-    printf("N: %d\tDensity: %.1lf%%\tRCM Execution Time: %lf\n",size,density,
+    // Graph * finalG = finalGraph(initialG, R);
+    printf("N: %d\tDensity: %.1lf%%\tSequential RCM Execution Time: %lf\n",size,density,
+            (double)((end.tv_usec - start.tv_usec)/1.0e6 + 
+            end.tv_sec - start.tv_sec));
+
+    gettimeofday(&start, NULL);
+    // Generate the initial graph
+    Graph * graph_p = parallelInitGraph(arr, size); 
+    // Calculate permutations matrix
+    Array * R_p = rcmParallel(graph_p);
+    gettimeofday(&end, NULL);
+
+    printf("N: %d\tDensity: %.1lf%%\tParallel RCM Execution Time: %lf\n",size,density,
             (double)((end.tv_usec - start.tv_usec)/1.0e6 + 
             end.tv_sec - start.tv_sec));
    
     // Print the final Sparse Matrix  
-    graphToSparseMatrix(finalG, size, arr);
-    saveCsv(arr, size, 0);
+    // graphToSparseMatrix(finalG, size, arr);
+    // saveCsv(arr, size, 0);
 
     // Free allocated memory
     free(graph);
-    free(initialG);
-    free(finalG);
+    //free(initialG);
+    //free(finalG);
     free(R);
     free(arr);
 }

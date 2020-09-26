@@ -228,6 +228,52 @@ Graph * initializeGraph(int *arr, int size)
     return graph;
 }
 
+// This function generates the initial graph produced
+// from the initial Sparse Matrix
+Graph * parallelInitGraph(int *arr, int size)
+{
+    Graph * graph = (Graph *)malloc(sizeof(Graph));
+    graph->size = size; 
+    graph->nodes = (Node **)malloc(graph->size*sizeof(Node));
+    // Initialize nodes
+    for(int i=0; i<graph->size; i++)
+    {
+        graph->nodes[i] = (Node *)malloc(sizeof(Node));
+        graph->nodes[i]->neighbours = (Node**)malloc(size*sizeof(Node));
+        graph->nodes[i]->degree = 0;
+        graph->nodes[i]->idx = i;
+        graph->nodes[i]->inQ = 0;
+        graph->nodes[i]->inR = 0;
+    } 
+    graph->tail = size-1;
+    graph->head = 0;
+    // Construct each node's degree and neighbours based on the initial sparse matrix
+    int i;
+    int j;
+    for(int n=0; n<graph->size * graph->size; n++)
+    {
+        i = n/graph->size;
+        j = n%graph->size;
+        
+        int counter = 0;
+
+        if (i==j)
+            continue;
+        if(arr[size * i + j])
+        {
+            // Traverse the original matrix and calculate degree & 
+            // neighbours for each graph node
+            graph->nodes[i]->degree++;
+            graph->nodes[i]->neighbours[counter] = (Node*)malloc(sizeof(Node));
+            graph->nodes[i]->neighbours[counter] = graph->nodes[j];
+            counter++;
+        }
+        
+
+    }
+    return graph;
+}
+
 // This function sorts the nodes of a graph based on 
 // their degrees. Also, each node's neighbours are sorted
 // according to their degrees.

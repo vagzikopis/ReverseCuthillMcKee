@@ -52,9 +52,17 @@ typedef struct Array
 // from the initial Sparse Matrix
 Graph * initializeGraph(int *arr, int size);
 
+// This function generates the initial graph produced
+// from the initial Sparse Matrix in parallel
+Graph * parallelInitGraph(int *arr, int size);
+
 // This function generates the permutation Array R.
 // R has the form of an Array struct.
 Array * rcmSequential(Graph * graph);
+
+// This function generates the permutation Array R in parallel.
+// R has the form of an Array struct.
+Array * rcmParallel(Graph * graph);
 
 // This function generates the final graph based on the initial graph G
 // and the permutations R.
