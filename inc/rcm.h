@@ -64,7 +64,7 @@ Graph * finalGraph(Graph * G, Array * R);
 void graphToSparseMatrix(Graph * finalG, int size, int *arr);
 
 // This function saves a col-major int array to a .csv file int matrices directory
-void saveCsv (int *arr, char * filename, int size);
+void saveCsv (int *arr, int size, int input);
 
 // This function sorts the nodes of a graph based on 
 // their degrees. Also, each node's neighbours are sorted
@@ -92,8 +92,11 @@ void pushArray(Array * R, Node * nd);
 // It is used in order to perform qsort to an array of structs
 int compare (const void * a, const void * b);
 
+// This function saves a col-major int array to a .txt file in sparseMatrices directory
+void saveTxt(int *arr, int size);
 
-
+// This function reads a sparse Matrix from a .txt file and stores it in a col-major array 
+int *readTxt(char * filename, int size);
 
 
 
