@@ -4,4 +4,5 @@ EXECS = sequential
 .PHONY: $(EXECS)
 all: $(EXECS)
 sequential:
-	cd src;	$(CC) sequential.c secondaryFunctions.c main.c -o $@;
+	mkdir bin; 
+	cd src;	$(CC) rcm.c secondaryFunctions.c main.c  -fopenmp -o  ../bin/$@; cd ..;

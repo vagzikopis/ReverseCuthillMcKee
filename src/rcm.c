@@ -6,7 +6,7 @@
 
 // This function generates the permutation Array R.
 // R has the form of an Array struct.
-Array * rcmSequential(Graph * graph)
+Array * rcm(Graph * graph)
 {
     sortGraph(graph);
     struct timeval start, end;

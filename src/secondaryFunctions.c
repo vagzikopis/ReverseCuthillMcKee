@@ -1,4 +1,5 @@
 #include "../inc/rcm.h"
+#include <omp.h>
 
 // This is a helper function for qsort.
 // It is used in order to perform qsort to an array of structs
@@ -35,7 +36,8 @@ void pushGraph(Graph * G, Node * nd)
     }
     G->nodes[G->tail] = nd;
     G->tail++;
-    nd->inQ=1;
+    nd->inQ=1;   
+    
 }
 
 // This function extracts a node from Graph G.
@@ -67,30 +69,41 @@ Graph * finalGraph(Graph * G, Array * R)
         F->nodes[i]->degree = G->nodes[R->nodeIdx[i]]->degree;
     }
     int index;
+    int j;
+    // this omp optimizations do not contribute to the core algorithm
+    // performance rather than the program's performance overall
+    #pragma omp parallel for num_threads(4) private(j)
     for(int i=0; i<F->size; i++)
     {
         F->nodes[i]->neighbours = (Node**)malloc( F->nodes[i]->degree*sizeof(Node));
-        for(int j=0; j< F->nodes[i]->degree; j++)
+        
+        int k;
+        #pragma omp parallel for num_threads(4) private(k, index)
+        for( j=0; j< F->nodes[i]->degree; j++)
         {
-            for(int k=0; k<R->size; k++)
+            for(k=0; k<R->size; k++)
             {
                 if(G->nodes[R->nodeIdx[i]]->neighbours[j]->idx == R->nodeIdx[k])
                 {
                     index = k;
                 }
             }
+            
             F->nodes[i]->neighbours[j] =  F->nodes[index];
         }
     }
     return F;
 }
 
+
 // This function creates the Final Sparse Matrix from the final Graph
 void graphToSparseMatrix(Graph * finalG, int size, int *arr)
-{
-     for(int i=0; i<size; i++)
+{   
+    int j;
+    #pragma omp parallel for num_threads(8) private(j) collapse(2)
+    for(int i=0; i<size; i++)
     {
-        for(int j=0; j<size; j++)
+        for(j=0; j<size; j++)
         {
             if(i==j)
             {
@@ -103,14 +116,16 @@ void graphToSparseMatrix(Graph * finalG, int size, int *arr)
             
         }
     }
+        
     for(int i=0; i<finalG->size; i++)
     {
-        for(int j=0; j<finalG->nodes[i]->degree; j++)
+        for(j=0; j<finalG->nodes[i]->degree; j++)
         {
             arr[size*(finalG->nodes[i]->idx) + finalG->nodes[i]->neighbours[j]->idx] = 1;
         }
     }
 }
+
 
 // This function saves a col-major int array to a .csv file in sparseMatrices directory
 void saveCsv (int *arr, int size, int input)
@@ -218,11 +233,58 @@ Graph * initializeGraph(int *arr, int size)
                 // Traverse the original matrix and calculate degree & 
                 // neighbours for each graph node
                 graph->nodes[i]->degree++;
-                graph->nodes[i]->neighbours[counter] = (Node*)malloc(sizeof(Node));
+                //graph->nodes[i]->neighbours[counter] = (Node*)malloc(sizeof(Node));
                 graph->nodes[i]->neighbours[counter] = graph->nodes[j];
                 counter++;
             }
                  
+        }
+    }
+    return graph;
+}
+
+// This function generates the initial graph produced
+// from the initial Sparse Matrix
+Graph * parallelInitGraph(int *arr, int size)
+{
+    Graph * graph = (Graph *)malloc(sizeof(Graph));
+    graph->size = size; 
+    graph->nodes = (Node **)malloc(graph->size*sizeof(Node));
+    // Initialize nodes
+    for(int i=0; i<graph->size; i++)
+    {
+        graph->nodes[i] = (Node *)malloc(sizeof(Node));
+        graph->nodes[i]->neighbours = (Node**)malloc(size*sizeof(Node));
+        graph->nodes[i]->degree = 0;
+        graph->nodes[i]->idx = i;
+        graph->nodes[i]->inQ = 0;
+        graph->nodes[i]->inR = 0;
+    } 
+    graph->tail = size-1;
+    graph->head = 0;
+
+    // get as much thread processing power as twice 
+    // the device's physical cores
+    int numthreads = 2 * omp_get_max_threads();
+    printf("Number of threads = %d\n", numthreads);
+    int j, counter;
+    // Construct each node's degree and neighbours based on the initial sparse matrix
+    #pragma omp parallel for num_threads(numthreads) private(j,counter) if(graph->size > 2000)
+    for(int i=0; i<graph->size; i++)
+    {  
+        counter = 0;
+        for(j = 0 ; j < graph->size ; j++)
+        {
+            if (i==j)
+                continue;
+            if(arr[size * i + j])
+            {
+                // Traverse the original matrix and calculate degree & 
+                // neighbours for each graph node
+                graph->nodes[i]->degree++;
+                graph->nodes[i]->neighbours[counter] = graph->nodes[j];
+                counter++;
+            }
         }
     }
     return graph;
@@ -240,5 +302,45 @@ void sortGraph(Graph * G)
     }
     // Sort nodes based on nodes' degree  
     qsort(G->nodes, G->size, sizeof(G->nodes), compare);
+}
+
+int bandwith(int *Arr, int size)
+{
+	int band_hi = 0;
+	int band_lo = 0;
+	int temp;
+
+	for (int i = 0; i < size; i++)
+	{
+		temp = 0;
+		for (int j = size - 1; j > i; j--)
+			if (Arr[size * i + j] != 0)
+			{
+				temp = j - i;
+				break;
+			}
+			else
+				continue;
+
+		if (temp > band_hi)
+			band_hi = temp;
+
+		temp = 0;
+		for (int j = 0; j < i; j++)
+			if (Arr[size * i + j] != 0)
+			{
+				temp = i - j;
+				break;
+			}
+			else
+				continue;
+
+		if (temp > band_lo)
+			band_lo = temp;
+	}
+
+	int bandwidth = band_lo + band_hi + 1;
+
+	return bandwidth;
 }
 
