@@ -58,11 +58,7 @@ Graph * parallelInitGraph(int *arr, int size);
 
 // This function generates the permutation Array R.
 // R has the form of an Array struct.
-Array * rcmSequential(Graph * graph);
-
-// This function generates the permutation Array R in parallel.
-// R has the form of an Array struct.
-Array * rcmParallel(Graph * graph);
+Array * rcm(Graph * graph);
 
 // This function generates the final graph based on the initial graph G
 // and the permutations R.
@@ -106,5 +102,5 @@ void saveTxt(int *arr, int size);
 // This function reads a sparse Matrix from a .txt file and stores it in a col-major array 
 int *readTxt(char * filename, int size);
 
-
-
+// Calculates the bandwith of a sparse Matrix
+int bandwith(int *Arr, int size);
