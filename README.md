@@ -12,12 +12,17 @@ Sparse graph matrix reordering using ReverseCuthillMcKee algorithm and OpenMP li
 
 ```bash
 cd ReverseCuthillMckee
-make sequential
-cd src
-./sequential
+make
+cd bin
+./sequential or ./parallel
 ```
+### Optional Functions
 
-At the beginning the program asks from the user to insert the size and density of the matrix. The sparse matrix is generated randomly. After the execution  the input and output matrices are stored in /sparseMatrices directory in .csv files.
+Our implementation offers optional functionality.
+
+- If you want to calculate the initial and final bandwidhts uncomment Lines X-Y and Lines X-Y.
+- If you want to save the input sparse matrix uncomment Lines X-Y.
+- If you want to generate and save the output sparse matrix uncomment Lines X-Y. This step could be time consuming for big matrices.
 
 ## Contributing
 

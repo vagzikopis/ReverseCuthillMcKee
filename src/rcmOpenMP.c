@@ -6,8 +6,10 @@
 
 // This function generates the permutation Array R.
 // R has the form of an Array struct.
-Array * rcm(Graph * graph)
+Array * rcm(int * arr, int size)
 {
+    // Generate the initial graph using OpenMP library
+    Graph * graph = parallelInitGraph(arr, size);
     sortGraph(graph);
     struct timeval start, end;
     Array * R = (Array *)malloc(sizeof(Array));

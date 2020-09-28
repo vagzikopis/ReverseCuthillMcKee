@@ -58,11 +58,11 @@ Graph * parallelInitGraph(int *arr, int size);
 
 // This function generates the permutation Array R.
 // R has the form of an Array struct.
-Array * rcm(Graph * graph);
+Array * rcm(int * arr, int size);
 
 // This function generates the final graph based on the initial graph G
 // and the permutations R.
-Graph * finalGraph(Graph * G, Array * R);
+Graph * finalizeGraph(Graph * G, Array * R);
 
 // This function creates the Final Sparse Matrix from the final Graph
 void graphToSparseMatrix(Graph * finalG, int size, int *arr);
@@ -104,3 +104,6 @@ int *readTxt(char * filename, int size);
 
 // Calculates the bandwith of a sparse Matrix
 int bandwith(int *Arr, int size);
+
+// Creates a size * size random sparse Matrix
+int * generateSparseMatrix(int size, double density);

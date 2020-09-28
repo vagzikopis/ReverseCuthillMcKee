@@ -57,7 +57,7 @@ Node * popGraph(Graph * G)
 
 // This function generates the final graph based on the initial graph G
 // and the permutations R.
-Graph * finalGraph(Graph * G, Array * R)
+Graph * finalizeGraph(Graph * G, Array * R)
 {
     Graph * F = (Graph *)malloc(sizeof(Graph*));
     F->size = G->size;
@@ -127,18 +127,19 @@ void graphToSparseMatrix(Graph * finalG, int size, int *arr)
 }
 
 
-// This function saves a col-major int array to a .csv file in sparseMatrices directory
+// This function saves a col-major int array to a .csv file in /sparseMatrices directory
 void saveCsv (int *arr, int size, int input)
 {
     char path[60];
     if(input)
     {
-        strcpy(path, "../sparseMatrices/input_size");
+        strcpy(path, "../sparseMatrices/input");
     }
     else
     {
-        strcpy(path,"../sparseMatrices/output_size");
+       strcpy(path,"../sparseMatrices/output");
     }
+    
     char name[8];
     char type[8] = ".csv";
     sprintf(name, "%d", size);
@@ -156,10 +157,10 @@ void saveCsv (int *arr, int size, int input)
     }
 }
 
-// This function saves a col-major int array to a .txt file in sparseMatrices directory
+// This function saves a col-major int array to a .txt file in /sparseMatrices directory
 void saveTxt(int *arr, int size)
 {
-    char path[50] = "../sparseMatrices/input_size";
+    char path[50] = "../sparseMatrices/input";
     char name[8];
     char type[8] = ".txt";
     sprintf(name, "%d", size);
@@ -304,6 +305,8 @@ void sortGraph(Graph * G)
     qsort(G->nodes, G->size, sizeof(G->nodes), compare);
 }
 
+// Calculate the bandwidth of a given sparse matrix in the form
+// of a col-major array
 int bandwith(int *Arr, int size)
 {
 	int band_hi = 0;
@@ -344,3 +347,29 @@ int bandwith(int *Arr, int size)
 	return bandwidth;
 }
 
+// Crate a random square sparse matrix given the size dimension and density
+int * generateSparseMatrix(int size, double density)
+{
+    int *arr = (int *)malloc(size*size*sizeof(int));
+    srand(time(0)); 
+    for(int i=0; i<size; i++)
+    {
+        for(int j=i; j<size; j++)
+        {
+            if(i == j)
+                arr[size*i + j] = 1;
+            else
+            {
+                double bin = (double)rand() / RAND_MAX;
+                if( bin <= 0.01*density ) 
+                    arr[size*i + j] = 1;
+                else
+                    arr[size*i + j] = 0;
+            }
+        }
+
+        for(int j=0; j<i; j++)
+            arr[size*i + j] = arr[size*j + i];
+    }
+    return arr;
+}
