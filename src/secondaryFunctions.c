@@ -309,9 +309,9 @@ void sortGraph(Graph * G)
 // of a col-major array
 int bandwith(int *Arr, int size)
 {
-	int band_hi = 0;
-	int band_lo = 0;
-	int temp;
+	int high = 0;
+	int low = 0;
+	int temp, band;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -325,8 +325,8 @@ int bandwith(int *Arr, int size)
 			else
 				continue;
 
-		if (temp > band_hi)
-			band_hi = temp;
+		if (temp > high)
+			high = temp;
 
 		temp = 0;
 		for (int j = 0; j < i; j++)
@@ -338,13 +338,13 @@ int bandwith(int *Arr, int size)
 			else
 				continue;
 
-		if (temp > band_lo)
-			band_lo = temp;
+		if (temp > low)
+			low = temp;
 	}
 
-	int bandwidth = band_lo + band_hi + 1;
+	band = low+high + 1;
 
-	return bandwidth;
+	return band;
 }
 
 // Crate a random square sparse matrix given the size dimension and density
