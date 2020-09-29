@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
     double exetime = (double)((end.tv_usec - start.tv_usec)/1.0e6 + end.tv_sec - start.tv_sec);
     printf("\t\t\tRCM Finished\n");
-    printf("N: %d\tDensity: %.1lf%%\tSequential RCM Execution Time: %lf\n",size,density,exetime);
+    printf("N: %d\tDensity: %.1lf%%\tRCM Execution Time: %lf\n",size,density,exetime);
     
 
     //////////////////////////////////////////////////////////
