@@ -1,0 +1,11 @@
+\section{Sequential Implementation}
+Our sequential implementation was designed based upon the algorithm's steps. The first step was to construct the initial graph from the input sparse matrix. This process is  implemented by the function \code{initializeGraph()}, that generates a \code{Graph *} structure which represents the initial graph. After the graph construction, \code{rcm()} function performs the Reverse Cuthill McKee algorithm. At first, the nodes of the graph are sorted according to their degree. Also, each node's neighbours are sorted according to their degrees. After the sorting step, the node picking process begins were nodes are picked either from the graph or the Q set. For the selected node it is examined whether it should be added to the R set or not. Also, the neighbours of the selected node are added to Q set, if they are not already in. The algorithm ends when all nodes of the graph are placed in the R set. The final step consists of reversing the indexes in R set.
+
+\emph{The next steps of our program are optional, since R set is computed and the algorithm has been completed}. The final graph, that is associated with the output matrix, is constructed by the function \code{finalizeGraph()} and based upon the R set. Finally, the output matrix is constructed by the \code{graphToSparseMatrix()} function. Please note that the last two functions  do not belong to the main computation algorithm, rather that they facilitate the final representation of the matrix. They don't have anything to do with the main algorithmic steps and that's why we won't demonstrate any optimizations on them in this report.
+\begin{figure}[H]
+  \centering
+  \includesvg{diagram}
+  \caption{Workflow Diagram}
+  \label{fig:d1}
+\end{figure}
+

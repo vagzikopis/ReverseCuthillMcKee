@@ -1,0 +1,30 @@
+\section{Parallel Implementation}
+Our parallel implementation utilizes the parallelization directives offered by \code{openMP}. There are certain points that need to be addressed first, though. We will try to break the theoretical algorithm into ``computationally heavy" core parts and disambiguate which ones could boost performance when parallelized.
+
+\bigbreak 
+
+\subsection{Graph Initialization}
+The reader should notice that this is where the main computation takes place. The two functions that accomplish the Graph Initialization are \code{initializeGraph()} and \code{parallelInitGraph()} for the sequential and the parallel part correspondingly.The reason why this is a heavy process in our program, is because \textbf{we provide the graph along with the degree information for every node}. That is to say, along with the initialization, there is being implemented the core job of counting the number of neighbours for every node. This double loop is distributed in a ``one thread per node" form. Now this is the basic double loop that is parallelizable in our program and that is why it boosts performance the most, when handled properly.
+\bigbreak 
+
+\subsection{Quick-Sorting and Picking Nodes}
+The main algorithm involves picking nodes from a sorted list. So we have the `sorting' part and the `picking' part. 
+
+Sorting is implemented using \code{quicksort} simply because ``it's quick". There are two important arguments that need to be addressed here. First of all, \code{qsort()} adds a serious amount of overhead when parallelized. We have tried parallelizing it but the performance boost takes place for a minimum of a very high number of nodes. Why not use some more parallelizable sorting algorithm, then? We have tried switching to \code{mergesort}, as it is obvious that is by far more easy to be parallelized. Indeed the speed-up  was greater, when \code{mergesort} was used. But that wasn't our final choice, simply because our ultimate goal was the total performance overall. Creating a fast sequential code in the first place beats creating a slow sequential algorithm just to demonstrate some acceleration skills. To conclude, our code uses \code{quicksort} just because it is faster in every case while our final goal was to make a fast algorithm even faster, by utilizing \code{openMP}. 
+
+On the `picking' part, this is where the nodes are being picked one by one from the queue - \textit{Q} while the very same queue is being filled with each node's neighbours at every iteration. This is just another double loop but there is a catch. The outer loop works in a conditional \code{while()} form and thus waits for a flag variable to reach a proper value, not knowing the number of iterations. This stems from the nature of the algorithm and that is why it can't be parallelized in a performance boost way.
+
+Another important part of this double loop is that we write in the main array \textit{R} and the intermediate queue \textit{Q}. Trying to do this job asynchronously imposes serious restrictions on critical parts of the code. This is because every node inserted does not have a predefined spot (in a form of chunk), rather than its place is decided dynamically according to the previous node (this is true for both nodes and neighbours positioning).\textit{Race conditions} that add significant overhead, appear upon parallelization of the process described above.
+\bigbreak 
+
+\subsection{Overall}
+From all the above, we could safely conclude, that according to our experiments, parallelizing a single \code{for-loop} of size \code{n} does not offer significant improvements and that is why we avoided it. This is depicted in Figure \ref{fig:parallelism}. There are only two double (and thus time consuming) loops in the (main) program, from which only one is offered for optimization. As one could observe from the test results though, the outcome is pretty encouraging. By applying the optimizations mentioned above, the execution time decreases more than twice, besides the fact that \textit{the algorithm is pretty strict in sharing variables and race conditions or mutual exclusion cases}.
+\bigbreak 
+
+
+\begin{figure}
+    \centering
+    \input{plot.pgf}
+    \caption{Levels of Parallelism Benchmark}
+    \label{fig:parallelism}
+\end{figure}

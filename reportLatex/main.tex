@@ -1,0 +1,67 @@
+\documentclass[a4paper]{report}
+\renewcommand{\thesection}{\arabic{section}}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+
+% Headers Footers
+\usepackage[a4paper,width=170mm,top=20mm,bot=1mm]{geometry}
+\usepackage{fancyhdr,ragged2e}
+% Header
+\fancyhead{}
+\lhead{\parbox[t]{0.45\textwidth}{\RaggedRight\rightmark\strut}}
+\rhead{\parbox[t]{0.45\textwidth}{\RaggedLeft\leftmark\strut}}
+\setlength{\headheight}{1\baselineskip}
+\pagestyle{fancy}
+
+% Icons
+\usepackage{fontawesome}
+
+% Section Titles
+\usepackage{titlesec}
+\titlespacing*{\section}
+{0pt}{1pt}{1.5pt}
+\titlespacing*{\subsection}
+{0pt}{1pt}{1.5pt}
+
+% For diagrams
+\usepackage{svg}
+\usepackage{pgf}
+% Box
+\usepackage[utf8]{inputenc}
+\usepackage{verbatim}
+
+% C++ code style
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset { %
+    language=C++,
+    backgroundcolor=\color{black!5}, % set backgroundcolor
+    basicstyle=\footnotesize,% basic font setting
+}
+\def\code#1{\texttt{#1}}
+
+% Images
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% References
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=red]{hyperref}%
+
+\title{Parallel \& Distributed Systems \\ Exercise 4: Reverse Cuthill McKee}
+\author[1]{Gonidelis Ioannis}
+\author[2]{Zikopis Evangelos}
+\affil[1]{Department of Electrical Engineering, AUTH, AEM: 8794}
+\affil[2]{Department of Electrical Engineering, AUTH, AEM: 8808}
+\date{September 2020 \bigskip \input{Github.tex}}
+
+
+
+\begin{document}
+\maketitle
+\input{Introduction.tex}
+\input{Sequential}
+\input{Parallel}
+\input{Results}
+
+\end{document}

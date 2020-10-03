@@ -1,0 +1,19 @@
+\section{Experimental Results}
+\bigbreak
+\subsection{Validation Test}
+In order to check the validity of our implementation, we tested the output of our sequential and parallel programs with the output from MATLAB. The input was a $5000 \times 5000$ sparse matrix. The results are depicted in Figure \ref{fig:validation}. As we can see, the bandwidth has been significantly reduced in both sequential and parallel outputs. Also, bandwidth values are very close to the MATLAB bandwidth value. 
+\begin{figure}[H]
+    \centering
+    \includegraphics{Webp.net-resizeimage (2).jpg}
+    \caption{Validation Benchmark}
+    \label{fig:validation}
+\end{figure}
+
+\subsection{Execution Time Test}
+Execution time benchmarking was performed on a DELL laptop with an Intel® Core™ i7-6500U CPU @ 2.50GHz × 4 processor and 8Gbytes RAM. Also, to test the scalability of our implementation we tested our parallel version on a more powerfull CPU AMD Ryzen7 4700 @ 2.0GHz x 8. Results are depicted in Figure \ref{fig:plot}. The inputs were sparse matrices with variable size and 1\% density. We observed that as density was increasing the speedup among the sequential and parallel implementation was also increasing. This is a reasonable observation, as a more dense matrix means that a node has more neighbours and as a result there are more iterations in the for loops that can be parallelized.
+\begin{figure}[H]
+    \centering
+    \input{plot2.pgf}
+    \caption{Execution Time Benchmark}
+    \label{fig:plot}
+\end{figure}
